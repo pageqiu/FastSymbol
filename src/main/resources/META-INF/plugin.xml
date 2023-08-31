@@ -1,7 +1,6 @@
 <idea-plugin>
   <id>pageqiu.conveniently.input.special.symbols</id>
   <name>FastSymbol</name>
-  <version>1.0-SNAPSHOT</version>
   <vendor email="yeehuqiu@icloud.com" url="https://blog.csdn.net/page_qiu?type=blog">pageqiu</vendor>
 
   <description>
@@ -20,13 +19,6 @@
         <br>-fast input special symbol
         ]]>
   </change-notes>
-
-  <idea-version since-build="172.4574.11"></idea-version>
-  <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-  <!--  <idea-version since-build="193.5662.53"/>-->
-
-  <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
-       on how to target different products -->
   <depends>com.intellij.modules.platform</depends>
 
   <extensions defaultExtensionNs="com.intellij">
@@ -61,7 +53,7 @@
 
 
   <!--    <action id="EditorBasics.KeyBoardAction"-->
-  <!--      class="com.page.KeyBoardAction"-->
+  <!--      class="main.java.com.page.KeyBoardAction"-->
   <!--      text="obtain key input">-->
   <!--      <add-to-group  group-id="MainMenu" anchor="last"/>-->
   <!--    </action>-->
