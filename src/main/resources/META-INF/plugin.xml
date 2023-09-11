@@ -11,12 +11,15 @@
   </extensions>
 
 <actions>
+  <group id="FastSymbolPlugin.FastSymbolMenu" text="Fast Symbol" description="Menu for 'Fast Symbol'">
+    <add-to-group group-id="MainMenu" anchor="last"/>
+  </group>
   <action id="EditorBasics.AutoInsertParentheses"
           class="com.page.AutoInsertParentheses"
           text="Insert Parentheses"
           description="Auto insert parentheses.">
     <keyboard-shortcut keymap="$default" first-keystroke="alt P"/>
-    <add-to-group  group-id="ToolsMenu" anchor="last"/>
+    <add-to-group  group-id="FastSymbolPlugin.FastSymbolMenu" anchor="last"/>
   </action>
 
   <action id="EditorBasics.AutoInsertCurlyBrackets"
@@ -24,7 +27,7 @@
           text="Insert Curly Brackets"
           description="Auto insert brackets.">
     <keyboard-shortcut keymap="$default" first-keystroke="alt C"/>
-    <add-to-group  group-id="ToolsMenu" anchor="after" relative-to-action="EditorBasics.AutoInsertParentheses"/>
+    <add-to-group  group-id="FastSymbolPlugin.FastSymbolMenu" anchor="after" relative-to-action="EditorBasics.AutoInsertParentheses"/>
   </action>
 
   <action id="EditorBasics.LogicalPositionIllustration"
@@ -32,12 +35,12 @@
           text="Insert Arrow"
           description="Auto insert arrow.">
   <keyboard-shortcut keymap="$default" first-keystroke="alt W"/>
-  <add-to-group  group-id="ToolsMenu" anchor="after" relative-to-action="EditorBasics.AutoInsertCurlyBrackets"/>
+  <add-to-group  group-id="FastSymbolPlugin.FastSymbolMenu" anchor="after" relative-to-action="EditorBasics.AutoInsertCurlyBrackets"/>
   </action>
 
 
   <!--    <action id="EditorBasics.KeyBoardAction"-->
-  <!--      class="main.java.com.page.KeyBoardAction"-->
+  <!--      class="com.page.KeyBoardAction"-->
   <!--      text="obtain key input">-->
   <!--      <add-to-group  group-id="MainMenu" anchor="last"/>-->
   <!--    </action>-->
