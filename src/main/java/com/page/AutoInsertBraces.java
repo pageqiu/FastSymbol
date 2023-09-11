@@ -10,7 +10,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
-public class AutoInsertCurlyBrackets extends AnAction {
+public class AutoInsertBraces extends AnAction {
 
     /**
      * Displays a message with information about the current caret.

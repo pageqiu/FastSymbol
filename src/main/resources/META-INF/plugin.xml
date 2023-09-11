@@ -22,10 +22,10 @@
     <add-to-group  group-id="FastSymbolPlugin.FastSymbolMenu" anchor="last"/>
   </action>
 
-  <action id="EditorBasics.AutoInsertCurlyBrackets"
-          class="com.page.AutoInsertCurlyBrackets"
-          text="Insert Curly Brackets"
-          description="Auto insert brackets.">
+  <action id="EditorBasics.AutoInsertBraces"
+          class="com.page.AutoInsertBraces"
+          text="Insert Braces"
+          description="Auto insert braces.">
     <keyboard-shortcut keymap="$default" first-keystroke="alt C"/>
     <add-to-group  group-id="FastSymbolPlugin.FastSymbolMenu" anchor="after" relative-to-action="EditorBasics.AutoInsertParentheses"/>
   </action>
@@ -35,7 +35,7 @@
           text="Insert Arrow"
           description="Auto insert arrow.">
   <keyboard-shortcut keymap="$default" first-keystroke="alt W"/>
-  <add-to-group  group-id="FastSymbolPlugin.FastSymbolMenu" anchor="after" relative-to-action="EditorBasics.AutoInsertCurlyBrackets"/>
+  <add-to-group  group-id="FastSymbolPlugin.FastSymbolMenu" anchor="after" relative-to-action="EditorBasics.AutoInsertBraces"/>
   </action>
 
 
