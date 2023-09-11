@@ -1,0 +1,51 @@
+<idea-plugin>
+  <id>pageqiu.conveniently.input.special.symbols</id>
+  <name>FastSymbol</name>
+  <vendor email="yeehuqiu@icloud.com" url="https://blog.csdn.net/page_qiu?type=blog">pageqiu</vendor>
+
+  <depends>com.intellij.modules.platform</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Add your extensions here -->
+    <editorFactoryDocumentListener implementation="com.page.listener.KeyBoardListener"/>
+  </extensions>
+
+<actions>
+  <group id="FastSymbolPlugin.FastSymbolMenu" text="Fast Symbol" description="Menu for 'Fast Symbol'">
+    <add-to-group group-id="MainMenu" anchor="last"/>
+  </group>
+  <action id="EditorBasics.AutoInsertParentheses"
+          class="com.page.AutoInsertParentheses"
+          text="Insert Parentheses"
+          description="Auto insert parentheses.">
+    <keyboard-shortcut keymap="$default" first-keystroke="alt P"/>
+    <add-to-group  group-id="FastSymbolPlugin.FastSymbolMenu" anchor="last"/>
+  </action>
+
+  <action id="EditorBasics.AutoInsertBraces"
+          class="com.page.AutoInsertBraces"
+          text="Insert Braces"
+          description="Auto insert braces.">
+    <keyboard-shortcut keymap="$default" first-keystroke="alt C"/>
+    <add-to-group  group-id="FastSymbolPlugin.FastSymbolMenu" anchor="after" relative-to-action="EditorBasics.AutoInsertParentheses"/>
+  </action>
+
+  <action id="EditorBasics.LogicalPositionIllustration"
+          class="com.page.EditorAreaIllustration"
+          text="Insert Arrow"
+          description="Auto insert arrow.">
+  <keyboard-shortcut keymap="$default" first-keystroke="alt W"/>
+  <add-to-group  group-id="FastSymbolPlugin.FastSymbolMenu" anchor="after" relative-to-action="EditorBasics.AutoInsertBraces"/>
+  </action>
+
+
+  <!--    <action id="EditorBasics.KeyBoardAction"-->
+  <!--      class="com.page.KeyBoardAction"-->
+  <!--      text="obtain key input">-->
+  <!--      <add-to-group  group-id="MainMenu" anchor="last"/>-->
+  <!--    </action>-->
+
+</actions>
+
+
+</idea-plugin>

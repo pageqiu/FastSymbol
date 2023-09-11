@@ -7,7 +7,6 @@ import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
 import com.page.notify.ShortKeyNotify;
 import com.page.utils.ReplaceBundle;
-import java.util.EventListener;
 import org.apache.batik.w3c.dom.events.KeyboardEvent;
 import org.jetbrains.annotations.NotNull;
 
