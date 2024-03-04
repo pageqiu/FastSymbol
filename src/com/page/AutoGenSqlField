@@ -1,0 +1,231 @@
+package com.page;
+
+import com.google.common.base.CaseFormat;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.command.WriteCommandAction;
+import com.intellij.openapi.editor.Caret;
+import com.intellij.openapi.editor.CaretModel;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.project.Project;
+import com.page.notify.ShortKeyNotify;
+import java.util.regex.Pattern;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+
+public class AutoGenSqlField extends AnAction {
+
+
+	// 自定义正则表达式
+	private static final Pattern HUMP_PATTERN = Pattern.compile("[A-Z0-9]");
+
+	/**
+	 * Displays a message with information about the current caret.
+	 *
+	 * @param e Event related to this action
+	 */
+	@Override
+	public void actionPerformed(@NotNull final AnActionEvent e) {
+		// Get access to the editor and caret model. update() validated editor's existence.
+		final Editor editor = e.getRequiredData(CommonDataKeys.EDITOR);
+
+		Document document = editor.getDocument();
+		Project project = editor.getProject();
+
+		e.getPresentation().setEnabledAndVisible(project != null
+			&& editor != null && editor.getSelectionModel().hasSelection());
+
+		CaretModel caretModel = editor.getCaretModel();
+		Caret primaryCaret = caretModel.getPrimaryCaret();
+		String selectText = primaryCaret.getSelectedText();
+
+		if (StringUtils.isBlank(selectText)) {
+			ShortKeyNotify.notifyInfo(null, "必须选择数据库字段");
+			return;
+		}
+
+		selectText = selectText.toLowerCase();
+		System.out.println("----"+selectText);
+		String humpText = CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, selectText);
+
+
+		/**   deal resultmap start   **/
+		Integer resultPosition = document.getText().indexOf("</resultMap>");
+		String resultString = "\n <result property=\""+humpText+"\"  column=\""+selectText+"\"/>  \n";
+		System.out.println("----"+resultString);
+
+		int start = resultPosition-1;
+
+		// Replace the selection with a fixed string.
+		// Must do this document change in a write action context.
+		WriteCommandAction.runWriteCommandAction(project, () ->
+			document.insertString(start, resultString)
+		);
+		/**   deal resultmap end   **/
+
+
+		/**   deal insert  start   **/
+		int startInsert =0;
+		Integer insertStartPosition =-1;
+		do {
+			System.out.println("=====document len=====:"+document.getText().length());
+			System.out.println("----------startInsert----: "+startInsert);
+			insertStartPosition = document.getText().indexOf("<insert", startInsert+1);
+			if (insertStartPosition > 0) {
+//			while (true) {
+//				startInsert = insertStartPosition;
+				Integer insertEndPosition = document.getText().indexOf("</insert>", insertStartPosition);
+				startInsert = insertEndPosition+10;
+				String insertContext = document.getText().substring(insertStartPosition, insertEndPosition+10);
+				System.out.println(insertContext);
+				Integer insertIfPosition = insertContext.indexOf("<if");
+				if (insertIfPosition > 0) {
+					String insertResultString =
+						" \n <if test=\"" + humpText + " != null\">" + selectText + ",</if> \n";
+					System.out.println("***insertResultString***" + insertResultString);
+
+					Integer insertIfAbsolutePosition = document.getText().indexOf("<if",insertStartPosition);
+					WriteCommandAction.runWriteCommandAction(project, () ->
+						document.insertString(insertIfAbsolutePosition - 1, insertResultString)
+					);
+
+					Integer insertValuePosition = document.getText().indexOf("</trim>",insertStartPosition);
+					Integer insertIfValuePosition = document.getText().indexOf("<if", insertValuePosition+7);
+					String insertValueResultString =
+						" \n <if test=\"" + humpText + " != null\">#{" + humpText + "},</if> \n";
+					System.out.println("***insertValueResultString***" + insertValueResultString);
+
+					WriteCommandAction.runWriteCommandAction(project, () ->
+						document.insertString(insertIfValuePosition - 1, insertValueResultString)
+					);
+				} else {
+					Integer insertParenthesesPosition = document.getText().indexOf("(", insertStartPosition);
+					String field = selectText + ", ";
+					System.out.println("***field***" + field + " position:" + insertParenthesesPosition);
+					WriteCommandAction.runWriteCommandAction(project, () ->
+						document.insertString(insertParenthesesPosition + 1, field)
+					);
+
+					Integer insertLastParenthesesPosition = document.getText()
+						.indexOf("(", insertParenthesesPosition + 1);
+					String insertResultfield = " #{" + humpText + "},";
+					WriteCommandAction.runWriteCommandAction(project, () ->
+						document.insertString(insertLastParenthesesPosition + 1, insertResultfield)
+					);
+				}
+			} else {
+				break;
+			}
+		} while (insertStartPosition>0);
+		/**   deal insert  end   **/
+
+
+
+		/**   deal update  start   **/
+		int startUpd =0;
+		Integer updStartPosition =-1;
+
+		do {
+			System.out.println("=====document len=====:" + document.getText().length());
+			System.out.println("----------startUpdate----: " + startUpd);
+			updStartPosition = document.getText().indexOf("<update", startUpd + 1);
+
+			if (updStartPosition > 0) {
+				Integer updEndPosition = document.getText().indexOf("</update>", updStartPosition + 1);
+				startUpd = updEndPosition + 10;
+				String updText = document.getText().substring(updStartPosition, updEndPosition + 9);
+				Boolean ifExist = updText.contains("<if");
+
+				if (ifExist) {
+					Integer updIfAbsolutePositon = document.getText().indexOf("<if", updStartPosition + 9);
+
+					String updResultString =
+						"<if test=\"" + humpText + " != null\">" + selectText + "=#{" + humpText + "},</if>\n";
+					WriteCommandAction.runWriteCommandAction(project, () ->
+						document.insertString(updIfAbsolutePositon - 1, updResultString)
+					);
+				}
+			} else {
+				break;
+			}
+		}while (updStartPosition>0);
+		/**   deal update  end   **/
+
+
+
+		/**   deal query condition  start   **/
+		int startQuery =0;
+		Integer queryStartPosition =-1;
+		do {
+			System.out.println("=====document len=====:"+document.getText().length());
+			System.out.println("----------startQuery---: "+startQuery);
+			queryStartPosition = document.getText().indexOf("<sql", startQuery+1);
+			if (queryStartPosition > 0) {
+				Integer queryEndPosition = document.getText().indexOf("</sql>", queryStartPosition);
+				startQuery = queryEndPosition+10;
+				String queryContext = document.getText().substring(queryStartPosition, queryEndPosition+10);
+				System.out.println(queryContext);
+				boolean queryIfExist = queryContext.contains("<where>");
+				if (queryIfExist) {
+
+					Integer queryIfPosition = document.getText().indexOf("<if", queryStartPosition+1);
+//					String insertResultString =
+//						" \n <if test=\"" + humpText + " != null\">  " + selectText + ",</if> \n";
+					String queryResultString = "<if test=\""+humpText+" != null\"> and "+selectText+"=#{"+humpText+"}</if>\n";
+
+					System.out.println("***queryResultString***" + queryResultString);
+					WriteCommandAction.runWriteCommandAction(project, () ->
+						document.insertString(queryIfPosition - 1, queryResultString)
+					);
+				}
+			} else {
+				break;
+			}
+		} while (queryStartPosition>0);
+		/**   deal query condition  end   **/
+
+		primaryCaret.removeSelection();
+	}
+
+
+
+//	private String humpToLine(String str) {
+//		Matcher matcher = HUMP_PATTERN.matcher(str);
+//		StringBuffer sb = new StringBuffer();
+//		while (matcher.find()) {
+//			matcher.appendReplacement(sb, "_" + matcher.group(0).toLowerCase());
+//		}
+//		matcher.appendTail(sb);
+//		return sb.toString();
+//	}
+
+
+	/**
+	 * Sets visibility and enables this action menu item if:
+	 * <ul>
+	 *   <li>a project is open</li>
+	 *   <li>an editor is active</li>
+	 * </ul>
+	 *
+	 * @param e Event related to this action
+	 */
+	@Override
+	public void update(@NotNull final AnActionEvent e) {
+		// Get required data keys
+		final Project project = e.getProject();
+		final Editor editor = e.getData(CommonDataKeys.EDITOR);
+		//Set visibility only in case of existing project and editor
+		e.getPresentation().setEnabledAndVisible(project != null && editor != null);
+		try {
+
+		} catch (Exception e1) {
+		}
+	}
+
+	private void test() {
+
+	}
+
+}
