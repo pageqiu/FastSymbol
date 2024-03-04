@@ -35,6 +35,23 @@
   </extensions>
 
 <actions>
+
+   <group
+      id="com.page.SQLGroup"
+      popup="true"
+      text="生成SQL中的字段">
+      <add-to-group  group-id="EditorPopupMenu" anchor="first"/>
+      <!-- group children elements -->
+    </group>
+
+    <action id="EditorBasics.LogicalPositionIllustration"
+      class="com.page.EditorAreaIllustration"
+      text="insert arrow"
+      description="auto insert arrow.">
+      <keyboard-shortcut keymap="$default" first-keystroke="alt W"/>
+      <add-to-group  group-id="MainMenu" anchor="last"/>
+    </action>
+  
   <action id="EditorBasics.AutoInsertParentheses"
           class="com.page.AutoInsertParentheses"
           text="insert parentheses"
@@ -58,6 +75,13 @@
   <keyboard-shortcut keymap="$default" first-keystroke="alt W"/>
   <add-to-group  group-id="MainMenu" anchor="last"/>
   </action>
+
+   <action id="EditorBasics.AutoGenSqlResult"
+      class="com.page.AutoGenSqlField"
+      text="自动生成新增字段"
+      description="自动生成新增字段">
+      <add-to-group  group-id="com.page.SQLGroup" anchor="first"/>
+    </action>
 
 
   <!--    <action id="EditorBasics.KeyBoardAction"-->
